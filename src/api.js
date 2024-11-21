@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL: "https://app.ticketmaster.com/discovery/v2",
 });
 
-export function getEvents() {
+function getEvents() {
   return api
     .get("/events.json", {
       params: {
@@ -17,3 +17,18 @@ export function getEvents() {
       return results;
     });
 }
+
+function getEventById(id) {
+  return api
+    .get(`/events/${id}.json`, {
+      params: {
+        apikey: "iuQORba1fu662UjAtHOGfZNbboHlXXgm",
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+      return response.data;
+    });
+}
+
+export { getEvents, getEventById };

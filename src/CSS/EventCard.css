@@ -8,3 +8,9 @@
   max-width: 300px;
   display: inline-block;
 }
+
+.card-image {
+  max-width: 60%;
+  height: auto;
+  border-radius: 5%;
+}
