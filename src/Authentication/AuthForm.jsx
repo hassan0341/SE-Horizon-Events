@@ -1,7 +1,12 @@
 import { useState } from "react";
 import "../CSS/AuthForm.css";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth, db } from "./firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,6 +14,9 @@ const AuthForm = () => {
   const [password, setPassword] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
+  const [regUsername, setRegUsername] = useState("");
+
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -16,14 +24,28 @@ const AuthForm = () => {
       await createUserWithEmailAndPassword(auth, regEmail, regPassword);
       const user = auth.currentUser;
       console.log(user);
+      if (user) {
+        await setDoc(doc(db, "Users", user.uid), {
+          email: user.email,
+          username: regUsername,
+        });
+      }
       console.log("user registered successfully");
+      navigate("/events");
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log("user logged in successfully");
+      navigate("/events");
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -62,7 +84,10 @@ const AuthForm = () => {
               <button>Login</button>
               <p>
                 Not a Member?{" "}
-                <a href="#" onClick={() => setIsLogin(false)}>
+                <a
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setIsLogin(false)}
+                >
                   Sign Up now
                 </a>
               </p>
@@ -72,6 +97,12 @@ const AuthForm = () => {
           <form onSubmit={handleRegister}>
             <div className="form">
               <h2>Sign Up Form</h2>
+              <input
+                type="text"
+                placeholder="Username"
+                value={regUsername}
+                onChange={(e) => setRegUsername(e.target.value)}
+              />
               <input
                 type="email"
                 placeholder="Email"
@@ -84,11 +115,14 @@ const AuthForm = () => {
                 value={regPassword}
                 onChange={(e) => setRegPassword(e.target.value)}
               />
-              <input type="password" placeholder="Confirm Password" />
+
               <button>Sign Up</button>
               <p>
-                Already a member?
-                <a href="#" onClick={() => setIsLogin(true)}>
+                Already a member?{" "}
+                <a
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setIsLogin(true)}
+                >
                   Login now
                 </a>
               </p>

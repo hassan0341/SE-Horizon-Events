@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getEvents } from "../api";
 import EventCard from "./EventCard";
+import Header from "../Components/Header";
 import "../CSS/EventList.css";
 
 const EventList = () => {
@@ -14,6 +15,7 @@ const EventList = () => {
 
   return (
     <main>
+      <Header />
       <ul>
         {events.map((event) => {
           return <EventCard event={event} key={event.id} />;
