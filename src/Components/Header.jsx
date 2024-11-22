@@ -6,7 +6,7 @@ const Header = () => {
     <header>
       <h1 className="title">Horizon Events</h1>
       <h2 className="list-text">Top trending events</h2>
-      <Link to="/">
+      <Link to="/events">
         <button className="home-button">
           <p className="home-text">Home</p>
         </button>
