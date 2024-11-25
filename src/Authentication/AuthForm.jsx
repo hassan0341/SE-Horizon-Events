@@ -74,12 +74,14 @@ const AuthForm = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <button>Login</button>
               <p>
@@ -102,18 +104,21 @@ const AuthForm = () => {
                 placeholder="Username"
                 value={regUsername}
                 onChange={(e) => setRegUsername(e.target.value)}
+                required
               />
               <input
                 type="email"
                 placeholder="Email"
                 value={regEmail}
                 onChange={(e) => setRegEmail(e.target.value)}
+                required
               />
               <input
                 type="password"
                 placeholder="Password"
                 value={regPassword}
                 onChange={(e) => setRegPassword(e.target.value)}
+                required
               />
 
               <button>Sign Up</button>

@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<AuthForm />} />
+        <Route path="/auth" element={<AuthForm />} />
         <Route path="/events" element={<EventList />} />
         <Route path="/events/:id" element={<SingleEvent />} />
       </Routes>
