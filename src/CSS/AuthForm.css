@@ -70,3 +70,9 @@
 .form p {
   text-align: center;
 }
+
+.error-text {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 5px;
+}

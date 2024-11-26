@@ -13,6 +13,13 @@ const AuthForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [regEmail, setRegEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [regUsernameErr, setRegUsernameErr] = useState("");
+  const [regEmailErr, setRegEmailErr] = useState("");
+  const [regPasswordErr, setRegPasswordErr] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regUsername, setRegUsername] = useState("");
 
@@ -20,6 +27,25 @@ const AuthForm = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setRegEmailErr("");
+    setRegPasswordErr("");
+    setRegUsernameErr("");
+
+    if (!regUsername) {
+      setRegUsernameErr("Username is required");
+      return;
+    }
+
+    if (!regEmail) {
+      setRegEmailErr("Email is required");
+      return;
+    }
+
+    if (!regPasswordErr) {
+      setRegPasswordErr("Password is required");
+      return;
+    }
+
     try {
       await createUserWithEmailAndPassword(auth, regEmail, regPassword);
       const user = auth.currentUser;
@@ -30,22 +56,85 @@ const AuthForm = () => {
           username: regUsername,
         });
       }
-      console.log("user registered successfully");
-      navigate("/events");
+      navigate("/");
     } catch (error) {
-      console.log(error.message);
+      if (error.code === "auth/weak-password") {
+        setRegPasswordErr(error.message);
+      } else {
+        console.log(error.code);
+      }
+    }
+  };
+
+  const handleRegUsernameChange = (e) => {
+    setRegUsername(e.target.value);
+    if (regUsernameErr) {
+      setRegUsernameErr("");
+    }
+  };
+
+  const handleRegEmailChange = (e) => {
+    setRegEmail(e.target.value);
+    if (regEmailErr) {
+      setRegEmailErr("");
+    }
+  };
+
+  const handleRegPasswordChange = (e) => {
+    setRegPassword(e.target.value);
+    if (regPasswordErr) {
+      setRegPasswordErr("");
     }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setEmailError("");
+    setPasswordError("");
+    setLoginError("");
+
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log("user logged in successfully");
-      navigate("/events");
+      navigate("/");
     } catch (error) {
-      console.log(error.message);
+      if (error.code === "auth/invalid-credential") {
+        setLoginError(
+          "Invalid credentials. Please check your email and password."
+        );
+      } else if (error.code === "auth/invalid-email") {
+        setEmailError("Invalid Email format");
+      } else if (error.code === "auth/missing-password") {
+        setPasswordError("Incorrect password.");
+      } else {
+        console.error(error.message);
+      }
     }
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (emailError) {
+      setPasswordError("");
+    }
+    setLoginError("");
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (passwordError) {
+      setPasswordError("");
+    }
+    setLoginError("");
   };
 
   return (
@@ -73,17 +162,18 @@ const AuthForm = () => {
                 type="email"
                 placeholder="Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                onChange={handleEmailChange}
               />
+              {emailError && <p className="error-text">{emailError}</p>}
               <input
                 type="password"
                 placeholder="Password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                onChange={handlePasswordChange}
               />
+              {passwordError && <p className="error-text">{passwordError}</p>}
               <button>Login</button>
+              {loginError && <p className="error-text">{loginError}</p>}
               <p>
                 Not a Member?{" "}
                 <a
@@ -103,24 +193,23 @@ const AuthForm = () => {
                 type="text"
                 placeholder="Username"
                 value={regUsername}
-                onChange={(e) => setRegUsername(e.target.value)}
-                required
+                onChange={handleRegUsernameChange}
               />
+              {regUsernameErr && <p className="error-text">{regUsernameErr}</p>}
               <input
                 type="email"
                 placeholder="Email"
                 value={regEmail}
-                onChange={(e) => setRegEmail(e.target.value)}
-                required
+                onChange={handleRegEmailChange}
               />
+              {regEmailErr && <p className="error-text">{regEmailErr}</p>}
               <input
                 type="password"
                 placeholder="Password"
                 value={regPassword}
-                onChange={(e) => setRegPassword(e.target.value)}
-                required
+                onChange={handleRegPasswordChange}
               />
-
+              {regPasswordErr && <p className="error-text">{regPasswordErr}</p>}
               <button>Sign Up</button>
               <p>
                 Already a member?{" "}

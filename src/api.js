@@ -15,6 +15,9 @@ function getEvents() {
     .then((response) => {
       const results = response.data._embedded.events;
       return results;
+    })
+    .catch((error) => {
+      throw error;
     });
 }
 
@@ -27,6 +30,10 @@ function getEventById(id) {
     })
     .then((response) => {
       return response.data;
+    })
+    .catch((error) => {
+      console.log(error.message, "<<<< In GET EVENTS");
+      throw error;
     });
 }
 
