@@ -18,11 +18,12 @@ const AuthForm = () => {
   const [loginError, setLoginError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  const [role, setRole] = useState("");
   const [regUsernameErr, setRegUsernameErr] = useState("");
   const [regEmailErr, setRegEmailErr] = useState("");
   const [regPasswordErr, setRegPasswordErr] = useState("");
   const [regPassword, setRegPassword] = useState("");
-  const [regUsername, setRegUsername] = useState("");
+  const [regUsername, setRegUsername] = useState("Regular User");
 
   const [loading, setLoading] = useState(false);
 
@@ -49,6 +50,12 @@ const AuthForm = () => {
 
     if (!regPassword) {
       setRegPasswordErr("Password is required");
+      setLoading(false);
+      return;
+    }
+
+    if (!role) {
+      setRoleErr("A role is required");
       setLoading(false);
       return;
     }
@@ -93,6 +100,10 @@ const AuthForm = () => {
     if (regPasswordErr) {
       setRegPasswordErr("");
     }
+  };
+
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
   };
 
   const handleLogin = async (e) => {
@@ -201,6 +212,27 @@ const AuthForm = () => {
           <form onSubmit={handleRegister}>
             <div className="form">
               <h2>Sign Up Form</h2>
+              <div className="role-selection">
+                <p>Register as a: {role}</p>
+                <label>
+                  <input
+                    type="radio"
+                    value="Regular User"
+                    checked={role === "Regular User"}
+                    onChange={handleRoleChange}
+                  />
+                  Regular User
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="Staff Member"
+                    checked={role === "Staff Member"}
+                    onChange={handleRoleChange}
+                  />
+                  Staff Member
+                </label>
+              </div>
               <input
                 type="text"
                 placeholder="Username"
@@ -208,6 +240,7 @@ const AuthForm = () => {
                 onChange={handleRegUsernameChange}
               />
               {regUsernameErr && <p className="error-text">{regUsernameErr}</p>}
+
               <input
                 type="email"
                 placeholder="Email"
