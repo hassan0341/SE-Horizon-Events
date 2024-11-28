@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [regEmail, setRegEmail] = useState("");
@@ -23,6 +24,8 @@ const AuthForm = () => {
   const [regPassword, setRegPassword] = useState("");
   const [regUsername, setRegUsername] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -30,19 +33,23 @@ const AuthForm = () => {
     setRegEmailErr("");
     setRegPasswordErr("");
     setRegUsernameErr("");
+    setLoading(true);
 
     if (!regUsername) {
       setRegUsernameErr("Username is required");
+      setLoading(false);
       return;
     }
 
     if (!regEmail) {
       setRegEmailErr("Email is required");
+      setLoading(false);
       return;
     }
 
-    if (!regPasswordErr) {
+    if (!regPassword) {
       setRegPasswordErr("Password is required");
+      setLoading(false);
       return;
     }
 
@@ -64,6 +71,7 @@ const AuthForm = () => {
         console.log(error.code);
       }
     }
+    setLoading(false);
   };
 
   const handleRegUsernameChange = (e) => {
@@ -92,14 +100,17 @@ const AuthForm = () => {
     setEmailError("");
     setPasswordError("");
     setLoginError("");
+    setLoading(true);
 
     if (!email) {
       setEmailError("Email is required");
+      setLoading(false);
       return;
     }
 
     if (!password) {
       setPasswordError("Password is required");
+      setLoading(false);
       return;
     }
 
@@ -119,6 +130,7 @@ const AuthForm = () => {
         console.error(error.message);
       }
     }
+    setLoading(false);
   };
 
   const handleEmailChange = (e) => {
@@ -172,7 +184,7 @@ const AuthForm = () => {
                 onChange={handlePasswordChange}
               />
               {passwordError && <p className="error-text">{passwordError}</p>}
-              <button>Login</button>
+              <button>{loading ? "Loading..." : "Login"}</button>
               {loginError && <p className="error-text">{loginError}</p>}
               <p>
                 Not a Member?{" "}
@@ -210,7 +222,7 @@ const AuthForm = () => {
                 onChange={handleRegPasswordChange}
               />
               {regPasswordErr && <p className="error-text">{regPasswordErr}</p>}
-              <button>Sign Up</button>
+              <button>{loading ? "Loading..." : "Sign Up"}</button>
               <p>
                 Already a member?{" "}
                 <a
