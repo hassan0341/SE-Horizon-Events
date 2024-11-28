@@ -18,12 +18,13 @@ const AuthForm = () => {
   const [loginError, setLoginError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("Regular User");
+  const [roleErr, setRoleErr] = useState("");
   const [regUsernameErr, setRegUsernameErr] = useState("");
   const [regEmailErr, setRegEmailErr] = useState("");
   const [regPasswordErr, setRegPasswordErr] = useState("");
   const [regPassword, setRegPassword] = useState("");
-  const [regUsername, setRegUsername] = useState("Regular User");
+  const [regUsername, setRegUsername] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +35,7 @@ const AuthForm = () => {
     setRegEmailErr("");
     setRegPasswordErr("");
     setRegUsernameErr("");
+    setRoleErr("");
     setLoading(true);
 
     if (!regUsername) {
@@ -68,6 +70,7 @@ const AuthForm = () => {
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           username: regUsername,
+          role: role,
         });
       }
       navigate("/");
@@ -104,6 +107,9 @@ const AuthForm = () => {
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
+    if (roleErr) {
+      setRoleErr("");
+    }
   };
 
   const handleLogin = async (e) => {
@@ -232,6 +238,7 @@ const AuthForm = () => {
                   />
                   Staff Member
                 </label>
+                {roleErr && <p className="error-text">{roleErr}</p>}
               </div>
               <input
                 type="text"
