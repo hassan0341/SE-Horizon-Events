@@ -5,6 +5,29 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ManageEvents = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAccess = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists() && docSnap.data().role === "Staff Member") {
+          console.log("access granted");
+        } else {
+          console.log("Access Denied");
+          navigate("/");
+        }
+      } else {
+        console.log("No user logged in");
+        navigate("/auth");
+      }
+    };
+    checkAccess();
+  }, [navigate]);
+
   return (
     <>
       <SimpleHeader />
