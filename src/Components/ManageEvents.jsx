@@ -1,14 +1,18 @@
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../Authentication/firebase";
 import SimpleHeader from "./SimpleHeader";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loading from "./Loading";
 
 const ManageEvents = () => {
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAccess = async () => {
+      setLoading(true);
       const user = auth.currentUser;
       if (user) {
         const docRef = doc(db, "Users", user.uid);
@@ -22,16 +26,23 @@ const ManageEvents = () => {
         }
       } else {
         console.log("No user logged in");
-        navigate("/auth");
+        navigate("/unauthorized");
       }
+      setLoading(false);
     };
     checkAccess();
   }, [navigate]);
 
   return (
     <>
-      <SimpleHeader />
-      <div>ONLY STAFF CAN ACCESS THIS, YOU CAN DELETE EVENTS</div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <SimpleHeader />
+          <div>ONLY STAFF CAN ACCESS THIS, YOU CAN CREATE EVENTS</div>
+        </>
+      )}
     </>
   );
 };

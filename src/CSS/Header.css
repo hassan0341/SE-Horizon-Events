@@ -1,32 +1,89 @@
-.title {
-  text-align: center;
-}
-
-.home-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  font-size: 0.9em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  padding: 8px 40px;
-  transition: transform 0.2s;
-}
-
-.home-button:hover {
-  cursor: pointer;
-  transform: scale(1.05);
-  border-color: #646cff;
-}
-.home-text {
-  color: aliceblue;
-  text-decoration: none;
-}
-
-header {
+.header {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background-color: #1a1a1a;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid #007bff;
+}
+
+.welcome-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.welcome-message {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.staff-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-button,
+.logout-button,
+.home-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.nav-button:hover,
+.logout-button:hover,
+.home-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.title-section {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 18px;
+  font-weight: lighter;
+  color: #cccccc;
+}
+
+.loading-text,
+.auth-message {
+  font-size: 16px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .welcome-section {
+    align-items: center;
+  }
+
+  .staff-buttons {
+    justify-content: center;
+  }
 }

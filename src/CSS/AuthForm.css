@@ -4,14 +4,17 @@
   align-items: center;
   height: 100vh;
   width: 100%;
+  background-color: #000;
+  color: #fff;
 }
 
 .form-container {
-  background-color: white;
+  background-color: #1a1a1a;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
   width: 300px;
+  color: #fff;
 }
 
 .form-toggle {
@@ -23,15 +26,21 @@
 .form-toggle button {
   width: 50%;
   padding: 10px;
-  background-color: #f3f3f3;
+  background-color: #333;
+  color: #ddd;
   border: none;
   cursor: pointer;
   font-size: 16px;
   border-radius: 10px 10px 0 0;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.form-toggle button:hover {
+  background-color: #555;
 }
 
 .form-toggle .active {
-  background-color: #033452;
+  background-color: #007bff;
   color: white;
 }
 
@@ -41,23 +50,38 @@
 }
 
 .form h2 {
-  margin-bottom: 1px;
+  margin-bottom: 10px;
+  color: #fff;
 }
 
 .form input {
   padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #555;
   border-radius: 5px;
+  background-color: #222;
+  color: #ddd;
+  transition: border-color 0.3s;
+}
+
+.form input:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
 .form button {
   padding: 10px;
-  background-color: #033452;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.form button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 .form a {
@@ -65,10 +89,16 @@
   text-decoration: none;
   margin-bottom: 10px;
   text-align: right;
+  transition: color 0.3s;
+}
+
+.form a:hover {
+  color: #0056b3;
 }
 
 .form p {
   text-align: center;
+  color: #ddd;
 }
 
 .role-selection {
@@ -77,10 +107,11 @@
 
 .role-selection label {
   margin-right: 10px;
+  color: #ddd;
 }
 
 .error-text {
-  color: red;
+  color: #ff4d4d;
   font-size: 0.85em;
   margin-top: 5px;
 }

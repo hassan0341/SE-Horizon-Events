@@ -45,46 +45,42 @@ const Header = () => {
   };
 
   return (
-    <header>
+    <header className="header">
       {loading ? (
-        <p style={{ textAlign: "center" }}>Loading...</p>
+        <p className="loading-text">Loading...</p>
       ) : userDetails ? (
         <>
-          <p style={{ textAlign: "center" }}>
-            Welcome {userDetails.username || "Guest"}
-          </p>
-          {userDetails.role === "Staff Member" && (
-            <div>
-              <Link to="/manage-events">
-                <button className="home-button">
-                  <p className="home-text">Manage Events</p>
-                </button>
-              </Link>
-              <Link to="/create-events">
-                <button className="home-button">
-                  <p className="home-text">Create Events</p>
-                </button>
-              </Link>
-            </div>
-          )}
-          <button className="home-button" onClick={handleLogout}>
-            <p className="home-text">Log Out</p>
+          <div className="welcome-section">
+            <p className="welcome-message">
+              Welcome, {userDetails.username || "Guest"}
+            </p>
+            {userDetails.role === "Staff Member" && (
+              <div className="staff-buttons">
+                <Link to="/manage-events">
+                  <button className="nav-button">Manage Events</button>
+                </Link>
+                <Link to="/create-events">
+                  <button className="nav-button">Create Events</button>
+                </Link>
+              </div>
+            )}
+          </div>
+          <button className="logout-button" onClick={handleLogout}>
+            Log Out
           </button>
         </>
       ) : (
-        <>
-          <p style={{ textAlign: "center" }}>
-            Hello, <Link to="/auth">click to login/sing up</Link>
-          </p>
-        </>
+        <p className="auth-message">
+          Hello, <Link to="/auth">click to login/sign up</Link>
+        </p>
       )}
-      <h1 className="title">Horizon Events</h1>
-      <h2 className="list-text">Top trending events</h2>
-      <Link to="/">
-        <button className="home-button">
-          <p className="home-text">Home</p>
-        </button>
-      </Link>
+      <div className="title-section">
+        <h1 className="title">Horizon Events</h1>
+        <h2 className="subtitle">Top trending events</h2>
+        <Link to="/">
+          <button className="home-button">Home</button>
+        </Link>
+      </div>
     </header>
   );
 };

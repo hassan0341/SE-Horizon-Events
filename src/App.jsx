@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import AuthForm from "./Authentication/AuthForm";
 import ManageEvents from "./Components/ManageEvents";
 import CreateEvents from "./Components/CreateEvents";
+import Unauthorized from "./Components/Unauthorized";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/events/:id" element={<SingleEvent />} />
         <Route path="/manage-events" element={<ManageEvents />} />
         <Route path="/create-events" element={<CreateEvents />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </>
   );

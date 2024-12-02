@@ -1,7 +1,9 @@
 .event-card {
-  border: 1px solid black;
+  background-color: #1a1717;
+  color: #fff;
+  border: 1px solid #333;
   border-radius: 10px;
-  box-shadow: rgb(49, 45, 45);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   padding: 20px;
   margin: 10px;
   text-align: center;
@@ -9,8 +11,44 @@
   display: inline-block;
 }
 
+.event-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8);
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #fff;
+}
+
 .card-image {
-  max-width: 60%;
-  height: auto;
-  border-radius: 5%;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #444;
+}
+
+.event-card h3 {
+  font-size: 16px;
+  margin: 10px 0;
+  text-align: center;
+  color: #ccc;
+}
+
+.event-card p {
+  font-size: 14px;
+  text-align: center;
+  color: #aaa;
+}
+
+@media (max-width: 768px) {
+  .event-card {
+    width: 90%;
+    margin: 10px auto;
+  }
 }
