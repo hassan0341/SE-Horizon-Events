@@ -45,87 +45,79 @@ function getEventById(id) {
     });
 }
 
-function createEvent(eventData) {
-  const organizationId = "199307250586";
-
+// Fetch Organizations
+function getOrganizations() {
   return eventBriteAPI
-    .post(
-      `/organizations/${organizationId}/events/`,
-      {
-        event: {
-          name: {
-            html: eventData.event_name,
-          },
-          start: {
-            timezone: "America/Los_Angeles", // Adjust to the event timezone
-            utc: eventData.start_date, // Start date in UTC
-          },
-          end: {
-            timezone: "America/Los_Angeles", // Adjust to the event timezone
-            utc: eventData.end_date, // End date in UTC
-          },
-          currency: "USD", // Adjust currency as needed
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer V2KMIQ75XD2WSBNCID4K`,
-        },
-      }
-    )
-    .then((response) => {
-      return response.data; // Success: Return the event data
-    })
+    .get("/users/me/organizations")
+    .then((response) => response.data)
     .catch((error) => {
-      console.error(
-        error.response
-          ? error.response.data.error_description
-          : "Error creating event"
-      );
+      console.error("Error fetching organizations:", error.message);
       throw error;
     });
 }
 
-function createTicketClass(eventId, ticketData) {
+// Create Event
+function createEvent(organizationId, eventData) {
+  return eventBriteAPI
+    .post(`/organizations/${organizationId}/events`, {
+      event: {
+        name: { html: eventData.event_name },
+        start: {
+          timezone: "America/Los_Angeles",
+          utc: eventData.start_date,
+        },
+        end: {
+          timezone: "America/Los_Angeles",
+          utc: eventData.end_date,
+        },
+        currency: eventData.currency,
+      },
+    })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error creating event:", error.message);
+      throw error;
+    });
+}
+
+// Create Ticket Tier
+function createTicketsTiers(eventId, ticketData) {
+  return eventBriteAPI
+    .post(`/events/${eventId}/inventory_tiers`, {
+      inventory_tier: {
+        name: ticketData.name,
+        quantity_total: ticketData.quantity,
+      },
+    })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error creating ticket tiers:", error.message);
+      throw error;
+    });
+}
+
+// Assign Ticket Tier
+function assignTicketTiersToEvent(eventId, ticketTierId, ticketData) {
   return eventBriteAPI
     .post(`/events/${eventId}/ticket_classes`, {
       ticket_class: {
         name: ticketData.name,
-        quantity_total: ticketData.quantity,
-        cost: ticketData.cost,
+        cost: ticketData.cost, // e.g., USD,1000
+        inventory_tier_id: ticketTierId,
       },
     })
-    .then((response) => {
-      return response.data;
-    })
+    .then((response) => response.data)
     .catch((error) => {
-      console.log(
-        error.response
-          ? error.response.data.error_description
-          : "Error creating ticket class"
-      );
-    });
-}
-
-function publishEvent(eventId) {
-  return eventBriteAPI
-    .post(`/events/${eventId}/publish/`)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(
-        error.response
-          ? error.response.data.error_description
-          : "Error creating ticket class"
-      );
+      console.error("Error assigning ticket tiers:", error.message);
+      throw error;
     });
 }
 
 export {
   getEvents,
   getEventById,
+  getOrganizations,
   createEvent,
-  createTicketClass,
-  publishEvent,
+  createTicketsTiers,
+  assignTicketTiersToEvent,
 };

@@ -4,7 +4,12 @@ import SimpleHeader from "./SimpleHeader";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
-import { createEvent, createTicketClass, publishEvent } from "../api";
+import {
+  getOrganizations,
+  createEvent,
+  createTicketsTiers,
+  assignTicketTiersToEvent,
+} from "../api";
 import ErrorComponent from "./ErrorComponent";
 import "../CSS/CreateEvent.css";
 
@@ -12,7 +17,7 @@ const CreateEvents = () => {
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [location, setLocation] = useState("");
+  const [currency, setCurrency] = useState("USD");
   const [ticketName, setTicketName] = useState("");
   const [ticketQuantity, setTicketQuantity] = useState("");
   const [ticketCost, setTicketCost] = useState("");
@@ -49,12 +54,10 @@ const CreateEvents = () => {
     setLoading(true);
     setError("");
 
-    // Ensure all fields are filled
     if (
       !eventName ||
       !startDate ||
       !endDate ||
-      !location ||
       !ticketName ||
       !ticketQuantity ||
       !ticketCost
@@ -75,32 +78,45 @@ const CreateEvents = () => {
       event_name: eventName,
       start_date: formattedStartDate,
       end_date: formattedEndDate,
-      location: location,
+      currency,
     };
 
-    // Call the createEvent function to create the event
-    createEvent(eventData)
+    getOrganizations()
+      .then((orgResponse) => {
+        const organizationId = orgResponse.organizations[0].id; // Use the first organization
+        return createEvent(organizationId, eventData);
+      })
       .then((eventResponse) => {
-        // After creating the event, create a ticket class
+        const eventId = eventResponse.id; // Use the created event ID
         const ticketData = {
           name: ticketName,
-          quantity: ticketQuantity,
-          cost: ticketCost,
+          quantity: parseInt(ticketQuantity, 10),
+          cost: `${currency},${parseFloat(ticketCost) * 100}`, // Format to "USD,1000"
         };
-        return createTicketClass(eventResponse.id, ticketData); // eventResponse.id is the Event ID
+        return createTicketsTiers(eventId, ticketData);
       })
       .then((ticketResponse) => {
-        // After creating the ticket class, publish the event
-        return publishEvent(ticketResponse.event_id); // ticketResponse.event_id is the Event ID
+        const ticketTierId = ticketResponse.inventory_tier.id; // Use the ticket tier ID
+        const eventId = ticketResponse.event_id;
+        const ticketClassData = {
+          name: ticketName,
+          cost: `${currency},${parseFloat(ticketCost) * 100}`,
+        };
+        return assignTicketTiersToEvent(eventId, ticketTierId, ticketClassData);
       })
       .then(() => {
         setLoading(false);
         alert("Event created successfully!");
-        // Handle success (e.g., navigate to another page or reset form)
+        // Reset form after successful creation
+        setEventName("");
+        setStartDate("");
+        setEndDate("");
+        setTicketName("");
+        setTicketQuantity("");
+        setTicketCost("");
       })
       .catch((err) => {
         setLoading(false);
-
         setError("Error creating event: " + err.message);
       });
   };
@@ -137,14 +153,6 @@ const CreateEvents = () => {
                   type="datetime-local"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                />
-              </label>
-              <label>
-                Location:
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
                 />
               </label>
               <label>
