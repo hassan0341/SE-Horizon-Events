@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getEvents } from "../api";
+import { getEvents } from "../API-Functions/api";
+import { getMyEvents } from "../API-Functions/myApi";
 import EventCard from "./EventCard";
 import Header from "../Components/Header";
 import Loading from "../Components/Loading";
@@ -12,9 +13,10 @@ const EventList = () => {
   const [isError, setIsError] = useState(null);
 
   useEffect(() => {
-    getEvents()
-      .then((eventsData) => {
-        setEvents(eventsData);
+    Promise.all([getEvents(), getMyEvents()])
+      .then(([eventsData1, eventsData2]) => {
+        const combinedEvents = [...eventsData1, ...eventsData2];
+        setEvents(combinedEvents);
         setLoading(false);
         setIsError(null);
       })

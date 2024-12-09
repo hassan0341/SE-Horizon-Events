@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getEventById } from "../api";
+import { getEventById } from "../API-Functions/api";
 import SimpleHeader from "../Components/SimpleHeader";
 import "../CSS/SingleEvent.css";
 import Loading from "./Loading";

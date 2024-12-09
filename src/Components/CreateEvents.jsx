@@ -4,126 +4,84 @@ import SimpleHeader from "./SimpleHeader";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
-import {
-  getOrganizations,
-  createEvent,
-  createTicketsTiers,
-  assignTicketTiersToEvent,
-} from "../api";
 import ErrorComponent from "./ErrorComponent";
 import "../CSS/CreateEvent.css";
+import { postEvents } from "../API-Functions/myApi";
 
 const CreateEvents = () => {
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [currency, setCurrency] = useState("USD");
-  const [ticketName, setTicketName] = useState("");
-  const [ticketQuantity, setTicketQuantity] = useState("");
-  const [ticketCost, setTicketCost] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [venueName, setVenueName] = useState("");
+
+  const [checkingAccess, setCheckingAccess] = useState(true); // For checking access
+  const [formLoading, setFormLoading] = useState(false);
+  const [eventImage, setEventImage] = useState("");
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAccess = async () => {
-      setLoading(true);
-      const user = auth.currentUser;
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setCheckingAccess(true); // Set loading state to true initially
       if (user) {
-        const docRef = doc(db, "Users", user.uid);
-        const docSnap = await getDoc(docRef);
+        try {
+          const docRef = doc(db, "Users", user.uid);
+          const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists() && docSnap.data().role === "Staff Member") {
-          console.log("access granted");
-        } else {
-          console.log("Access Denied");
-          navigate("/");
+          if (docSnap.exists() && docSnap.data().role === "Staff Member") {
+            console.log("Access granted");
+          } else {
+            console.log("Access Denied");
+            navigate("/");
+          }
+        } catch (error) {
+          console.error("Error checking access:", error);
+          navigate("/unauthorized");
         }
       } else {
         console.log("No user logged in");
         navigate("/unauthorized");
       }
-      setLoading(false);
-    };
-    checkAccess();
+      setCheckingAccess(false); // Set loading state to false once done
+    });
+
+    return () => unsubscribe(); // Cleanup listener on unmount
   }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
+    setFormLoading(true);
     setError("");
 
-    if (
-      !eventName ||
-      !startDate ||
-      !endDate ||
-      !ticketName ||
-      !ticketQuantity ||
-      !ticketCost
-    ) {
-      setError("Please fill out all fields.");
-      setLoading(false);
+    if (!eventName || !startDate || !venueName || !eventImage) {
+      setError("All fields are required.");
+      setFormLoading(false);
       return;
     }
 
-    const formattedStartDate = new Date(new Date(startDate))
-      .toISOString()
-      .replace(/\.\d{3}/, "");
-    const formattedEndDate = new Date(new Date(endDate))
-      .toISOString()
-      .replace(/\.\d{3}/, "");
-
     const eventData = {
       event_name: eventName,
-      start_date: formattedStartDate,
-      end_date: formattedEndDate,
-      currency,
+      venue: venueName,
+      start_date: startDate,
+      image: eventImage,
     };
 
-    getOrganizations()
-      .then((orgResponse) => {
-        const organizationId = orgResponse.organizations[0].id; // Use the first organization
-        return createEvent(organizationId, eventData);
-      })
-      .then((eventResponse) => {
-        const eventId = eventResponse.id; // Use the created event ID
-        const ticketData = {
-          name: ticketName,
-          quantity: parseInt(ticketQuantity, 10),
-          cost: `${currency},${parseFloat(ticketCost) * 100}`, // Format to "USD,1000"
-        };
-        return createTicketsTiers(eventId, ticketData);
-      })
-      .then((ticketResponse) => {
-        const ticketTierId = ticketResponse.inventory_tier.id; // Use the ticket tier ID
-        const eventId = ticketResponse.event_id;
-        const ticketClassData = {
-          name: ticketName,
-          cost: `${currency},${parseFloat(ticketCost) * 100}`,
-        };
-        return assignTicketTiersToEvent(eventId, ticketTierId, ticketClassData);
-      })
+    postEvents(eventData)
       .then(() => {
-        setLoading(false);
+        setFormLoading(false);
         alert("Event created successfully!");
-        // Reset form after successful creation
-        setEventName("");
-        setStartDate("");
-        setEndDate("");
-        setTicketName("");
-        setTicketQuantity("");
-        setTicketCost("");
+        navigate("/");
       })
       .catch((err) => {
-        setLoading(false);
-        setError("Error creating event: " + err.message);
+        console.error("Error creating event:", err);
+        setError("Failed to create event. Please try again.");
+        setFormLoading(false);
       });
   };
 
   return (
     <>
-      {loading ? (
+      {checkingAccess ? (
         <Loading />
       ) : (
         <>
@@ -135,8 +93,10 @@ const CreateEvents = () => {
                 Event Name:
                 <input
                   type="text"
+                  placeholder="Event Name..."
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
+                  required
                 />
               </label>
               <label>
@@ -145,43 +105,33 @@ const CreateEvents = () => {
                   type="datetime-local"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
+                  required
                 />
               </label>
               <label>
-                End Date:
-                <input
-                  type="datetime-local"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </label>
-              <label>
-                Ticket Name:
+                Venue Name:
                 <input
                   type="text"
-                  value={ticketName}
-                  onChange={(e) => setTicketName(e.target.value)}
+                  placeholder="Venue Name..."
+                  value={venueName}
+                  onChange={(e) => setVenueName(e.target.value)}
+                  required
                 />
+                <small>Accepted formats: JPG, PNG, etc.</small>
               </label>
               <label>
-                Ticket Quantity:
+                Event image:
                 <input
-                  type="number"
-                  value={ticketQuantity}
-                  onChange={(e) => setTicketQuantity(e.target.value)}
-                />
-              </label>
-              <label>
-                Ticket Cost (USD):
-                <input
-                  type="number"
-                  value={ticketCost}
-                  onChange={(e) => setTicketCost(e.target.value)}
+                  type="text"
+                  placeholder="Enter image URL"
+                  value={eventImage}
+                  onChange={(e) => setEventImage(e.target.value)}
+                  required
                 />
               </label>
               {error && <ErrorComponent error={error} />}
-              <button type="submit" disabled={loading}>
-                {loading ? "Creating..." : "Create Event"}
+              <button type="submit" disabled={formLoading}>
+                {formLoading ? "Creating..." : "Create Event"}
               </button>
             </form>
           </div>
