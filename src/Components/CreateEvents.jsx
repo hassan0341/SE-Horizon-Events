@@ -48,7 +48,7 @@ const CreateEvents = () => {
     return () => unsubscribe(); // Cleanup listener on unmount
   }, [navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
     setError("");
@@ -59,24 +59,24 @@ const CreateEvents = () => {
       return;
     }
 
-    const eventData = {
-      event_name: eventName,
-      venue: venueName,
-      start_date: startDate,
-      image: eventImage,
-    };
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const eventData = {
+        event_name: eventName,
+        venue: venueName,
+        start_date: startDate,
+        image: eventImage,
+      };
 
-    postEvents(eventData)
-      .then(() => {
-        setFormLoading(false);
-        alert("Event created successfully!");
-        navigate("/");
-      })
-      .catch((err) => {
-        console.error("Error creating event:", err);
-        setError("Failed to create event. Please try again.");
-        setFormLoading(false);
-      });
+      await postEvents(eventData, token);
+      setFormLoading(false);
+      alert("Event created successfully!");
+      //navigate("/");
+    } catch (err) {
+      console.error("Error creating event:", err);
+      setError("Failed to create event. Please try again.");
+      setFormLoading(false);
+    }
   };
 
   return (
@@ -117,7 +117,6 @@ const CreateEvents = () => {
                   onChange={(e) => setVenueName(e.target.value)}
                   required
                 />
-                <small>Accepted formats: JPG, PNG, etc.</small>
               </label>
               <label>
                 Event image:

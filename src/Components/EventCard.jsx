@@ -13,8 +13,8 @@ const EventCard = ({ event }) => {
 
   return (
     <Link to={`/events/${event.id}`}>
-      <section className="event-card">
-        <h3 className="card-title">{eventName}</h3>
+      <section className="event-card" key={event.id}>
+        <h1 className="card-title">{eventName}</h1>
         <img src={image} alt="cover art for the event" className="card-image" />
         <h3>Start date: {formattedDate}</h3>
         <p>Venue: {venue}</p>

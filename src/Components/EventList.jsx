@@ -36,7 +36,7 @@ const EventList = () => {
       ) : (
         <ul>
           {events.map((event) => {
-            return <EventCard event={event} key={event.id} />;
+            return <EventCard event={event} key={event.event_id || event.id} />;
           })}
         </ul>
       )}

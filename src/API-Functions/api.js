@@ -14,6 +14,7 @@ function getEvents() {
     })
     .then((response) => {
       const results = response.data._embedded.events;
+
       return results;
     })
     .catch((error) => {

@@ -4,22 +4,31 @@ const myApi = axios.create({
   baseURL: "https://my-back-end-project.onrender.com/api",
 });
 
-function postEvents(eventData) {
+function postEvents(eventData, token) {
+  console.log("eventData: ", eventData, "token: ", token);
   return myApi
-    .post("/events", eventData)
+    .post("/events", eventData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
     .then((response) => {
+      console.log(response.data);
       return response.data;
     })
     .catch((error) => {
-      return error;
+      console.log(error);
+      throw error;
     });
 }
 
 function getMyEvents() {
-  return myApi.get("/events").then((response) => {
-    console.log(response.data.events);
-    return response.data.events;
-  });
+  return myApi
+    .get("/events")
+    .then((response) => {
+      return response.data.events;
+    })
+    .catch((error) => {
+      throw error;
+    });
 }
 
 export { postEvents, getMyEvents };
