@@ -13,16 +13,17 @@ const CreateEvents = () => {
   const [startDate, setStartDate] = useState("");
   const [venueName, setVenueName] = useState("");
 
-  const [checkingAccess, setCheckingAccess] = useState(true); // For checking access
+  const [checkingAccess, setCheckingAccess] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [eventImage, setEventImage] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      setCheckingAccess(true); // Set loading state to true initially
+      setCheckingAccess(true);
       if (user) {
         try {
           const docRef = doc(db, "Users", user.uid);
@@ -42,16 +43,17 @@ const CreateEvents = () => {
         console.log("No user logged in");
         navigate("/unauthorized");
       }
-      setCheckingAccess(false); // Set loading state to false once done
+      setCheckingAccess(false);
     });
 
-    return () => unsubscribe(); // Cleanup listener on unmount
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
     setError("");
+    setSuccessMessage("");
 
     if (!eventName || !startDate || !venueName || !eventImage) {
       setError("All fields are required.");
@@ -70,11 +72,16 @@ const CreateEvents = () => {
 
       await postEvents(eventData, token);
       setFormLoading(false);
-      alert("Event created successfully!");
-      //navigate("/");
+      setSuccessMessage("Event created successfully!");
+      setError("");
+
+      setEventName("");
+      setVenueName("");
+      setStartDate("");
+      setEventImage("");
     } catch (err) {
       console.error("Error creating event:", err);
-      setError("Failed to create event. Please try again.");
+      setError("Failed to create event. Please try again.", err);
       setFormLoading(false);
     }
   };
@@ -132,6 +139,9 @@ const CreateEvents = () => {
               <button type="submit" disabled={formLoading}>
                 {formLoading ? "Creating..." : "Create Event"}
               </button>
+              {successMessage && (
+                <p className="success-message">{successMessage}</p>
+              )}
             </form>
           </div>
         </>

@@ -12,7 +12,7 @@ const EventCard = ({ event }) => {
   const formattedDate = format(new Date(startDate), "dd MMMM yyyy, HH:mm");
 
   return (
-    <Link to={`/events/${event.id}`}>
+    <Link to={`/events/${event.id || event.event_id}`}>
       <section className="event-card" key={event.id}>
         <h1 className="card-title">{eventName}</h1>
         <img src={image} alt="cover art for the event" className="card-image" />

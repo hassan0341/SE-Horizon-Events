@@ -5,23 +5,32 @@ import SimpleHeader from "../Components/SimpleHeader";
 import "../CSS/SingleEvent.css";
 import Loading from "./Loading";
 import ErrorComponent from "./ErrorComponent";
+import { getMyEventById } from "../API-Functions/myApi";
 
 const SingleEvent = () => {
   const { id } = useParams();
+
   const [event, setEvent] = useState(null);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(null);
 
   useEffect(() => {
-    getEventById(id)
+    const isTicketmaster = /[a-zA-Z]/.test(id) && /\d/.test(id);
+
+    console.log("Event ID:", id);
+    console.log("Is Ticketmaster?", isTicketmaster);
+
+    const eventDataFunction = isTicketmaster ? getEventById : getMyEventById;
+
+    eventDataFunction(id)
       .then((eventData) => {
         setEvent(eventData);
         setLoading(false);
         setIsError(null);
       })
       .catch((error) => {
-        setIsError(error.message + " 404");
+        setIsError(error.message);
         setLoading(false);
       });
   }, [id]);
@@ -32,16 +41,17 @@ const SingleEvent = () => {
 
   const handleAddToCalendar = () => {
     const eventUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(
-      event?.name
-    )}&dates=${event?.dates?.start?.localDate.replace(
+      event?.event_name || event?.name
+    )}&dates=${event?.start_date.replace(/-/g, "")}T${event?.start_date.replace(
       /-/g,
       ""
-    )}/${event?.dates?.start?.localDate.replace(
+    )}Z/${event?.start_date.replace(/-/g, "")}T${event?.start_date.replace(
       /-/g,
       ""
-    )}&details=Check out this event!&location=${encodeURIComponent(
-      event?._embedded?.venues?.[0]?.name || "Unknown location"
+    )}Z&details=Check+out+this+event!&location=${encodeURIComponent(
+      event?.venue || "Unknown location"
     )}`;
+
     window.open(eventUrl, "_blank");
   };
 
@@ -54,14 +64,16 @@ const SingleEvent = () => {
         <ErrorComponent error={isError} />
       ) : (
         <main id="single-event">
-          <h2>{event?.name}</h2>
+          <h2>{event?.name || event.event_name}</h2>
           <img
-            src={event?.images?.[0]?.url}
+            src={event?.images?.[0]?.url || event.image}
             alt="cover art for the event"
             className="card-image"
           />
-          <h3>Venue: {event?._embedded?.venues?.[0]?.name}</h3>
-          <p>Start date: {event?.dates?.start?.localDate}</p>
+          <h3>Venue: {event?._embedded?.venues?.[0]?.name || event.venue}</h3>
+          <p>
+            Start date: {event?.dates?.start?.localDate || event.start_date}
+          </p>
           {!isSignedUp ? (
             <button onClick={handleSignUp}>Sign up to event</button>
           ) : (

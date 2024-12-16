@@ -33,7 +33,6 @@ function getEventById(id) {
       return response.data;
     })
     .catch((error) => {
-      console.log(error.message, "<<<< In GET EVENTS");
       throw error;
     });
 }

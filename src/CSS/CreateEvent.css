@@ -1,6 +1,5 @@
 .create-event-container {
   background-color: #121212;
-  color: #ffffff;
   max-width: 600px;
   margin: 50px auto;
   padding: 20px;
@@ -69,6 +68,12 @@
   color: #ff4444;
   font-size: 14px;
   margin-top: -10px;
+}
+
+.success-message {
+  color: green;
+  font-size: 1rem;
+  margin-top: 10px;
 }
 
 @media (max-width: 768px) {
