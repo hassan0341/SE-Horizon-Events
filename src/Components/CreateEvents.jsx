@@ -73,12 +73,14 @@ const CreateEvents = () => {
       await postEvents(eventData, token);
       setFormLoading(false);
       setSuccessMessage("Event created successfully!");
+
       setError("");
 
       setEventName("");
       setVenueName("");
       setStartDate("");
       setEventImage("");
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
       console.error("Error creating event:", err);
       setError("Failed to create event. Please try again.", err);
@@ -94,7 +96,7 @@ const CreateEvents = () => {
         <>
           <SimpleHeader />
           <div className="create-event-container">
-            <h2>Create Event</h2>
+            <h2>Create an Event</h2>
             <form onSubmit={handleSubmit} className="create-event-form">
               <label>
                 Event Name:

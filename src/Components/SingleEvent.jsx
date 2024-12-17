@@ -6,6 +6,7 @@ import "../CSS/SingleEvent.css";
 import Loading from "./Loading";
 import ErrorComponent from "./ErrorComponent";
 import { getMyEventById } from "../API-Functions/myApi";
+import { format } from "date-fns";
 
 const SingleEvent = () => {
   const { id } = useParams();
@@ -72,7 +73,9 @@ const SingleEvent = () => {
           />
           <h3>Venue: {event?._embedded?.venues?.[0]?.name || event.venue}</h3>
           <p>
-            Start date: {event?.dates?.start?.localDate || event.start_date}
+            Start date:{" "}
+            {event?.dates?.start?.localDate ||
+              format(new Date(event.start_date), "dd MMMM yyyy, HH:mm")}
           </p>
           {!isSignedUp ? (
             <button onClick={handleSignUp}>Sign up to event</button>

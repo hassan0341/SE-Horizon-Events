@@ -4,7 +4,7 @@ import SimpleHeader from "./SimpleHeader";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
-import { getEventsByCreator } from "../API-Functions/myApi";
+import { deleteEventById, getEventsByCreator } from "../API-Functions/myApi";
 import ErrorComponent from "./ErrorComponent";
 import "../CSS/ManageEvents.css";
 
@@ -13,6 +13,9 @@ const ManageEvents = () => {
   const [checkingAccess, setCheckingAccess] = useState(true);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [error, setError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [deletingEventId, setDeletingEventId] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -59,6 +62,23 @@ const ManageEvents = () => {
     }
   };
 
+  const handleDeleteEvent = async (id) => {
+    setDeletingEventId(id);
+    setDeleteError("");
+    try {
+      const token = await auth.currentUser.getIdToken();
+      await deleteEventById(id, token);
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event.event_id !== id)
+      );
+      setSuccessMessage("Event deleted successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      console.error("Error deleting event:", err);
+      setDeleteError("Failed to delete the event. Please try again.");
+    }
+  };
+
   if (checkingAccess) {
     return <Loading />;
   }
@@ -68,6 +88,7 @@ const ManageEvents = () => {
       <SimpleHeader />
       <div className="manage-event-container">
         <h1>Manage Your Events</h1>
+        {successMessage && <p className="success-message">{successMessage}</p>}
         {loadingEvents ? (
           <Loading />
         ) : error ? (
@@ -89,6 +110,17 @@ const ManageEvents = () => {
                     Start date: {new Date(event.start_date).toLocaleString()}
                   </h3>
                   <p>Venue: {event.venue}</p>
+                  <button
+                    onClick={() => handleDeleteEvent(event.event_id)}
+                    disabled={deletingEventId === event.event_id}
+                  >
+                    {deletingEventId === event.event_id
+                      ? "Deleting..."
+                      : "Delete Event"}
+                  </button>
+                  {deleteError && (
+                    <p className="error-message">{deleteError}</p>
+                  )}
                 </section>
               ))
             )}

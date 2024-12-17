@@ -47,9 +47,20 @@ function getMyEventById(id) {
       return response.data.event;
     })
     .catch((error) => {
-      console.log(error);
       throw error;
     });
 }
 
-export { postEvents, getMyEvents, getEventsByCreator, getMyEventById };
+function deleteEventById(id, token) {
+  return myApi.delete(`/events/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export {
+  postEvents,
+  getMyEvents,
+  getEventsByCreator,
+  getMyEventById,
+  deleteEventById,
+};

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const apiKey = import.meta.env.VITE_TICKETMASTER_API_KEY;
+
 const api = axios.create({
   baseURL: "https://app.ticketmaster.com/discovery/v2",
 });
@@ -8,7 +10,7 @@ function getEvents() {
   return api
     .get("/events.json", {
       params: {
-        apikey: "iuQORba1fu662UjAtHOGfZNbboHlXXgm",
+        apikey: apiKey,
         countryCode: "GB",
       },
     })
@@ -26,7 +28,7 @@ function getEventById(id) {
   return api
     .get(`/events/${id}.json`, {
       params: {
-        apikey: "iuQORba1fu662UjAtHOGfZNbboHlXXgm",
+        apikey: apiKey,
       },
     })
     .then((response) => {
