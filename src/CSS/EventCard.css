@@ -46,6 +46,10 @@
   color: #aaa;
 }
 
+.event-card button {
+  margin-right: 10px;
+}
+
 @media (max-width: 768px) {
   .event-card {
     width: 90%;

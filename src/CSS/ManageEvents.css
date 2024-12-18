@@ -5,6 +5,10 @@
   color: #00aaff;
 }
 
+.delete-button {
+  background-color: red;
+}
+
 .success-message {
   color: green;
   font-weight: bold;

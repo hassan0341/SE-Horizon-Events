@@ -7,6 +7,7 @@ import Loading from "./Loading";
 import { deleteEventById, getEventsByCreator } from "../API-Functions/myApi";
 import ErrorComponent from "./ErrorComponent";
 import "../CSS/ManageEvents.css";
+import EditEventForm from "./EditEventForm";
 
 const ManageEvents = () => {
   const [events, setEvents] = useState([]);
@@ -16,6 +17,8 @@ const ManageEvents = () => {
   const [deleteError, setDeleteError] = useState("");
   const [deletingEventId, setDeletingEventId] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+
+  const [editingEventId, setEditingEventId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -100,7 +103,7 @@ const ManageEvents = () => {
             ) : (
               events.map((event) => (
                 <section className="event-card" key={event.event_id}>
-                  <h3 className="card-title">{event.event_name}</h3>
+                  <h1 className="card-title">{event.event_name}</h1>
                   <img
                     src={event.image}
                     alt="cover art for the event"
@@ -113,11 +116,30 @@ const ManageEvents = () => {
                   <button
                     onClick={() => handleDeleteEvent(event.event_id)}
                     disabled={deletingEventId === event.event_id}
+                    className="delete-button"
                   >
                     {deletingEventId === event.event_id
                       ? "Deleting..."
                       : "Delete Event"}
                   </button>
+                  <button onClick={() => setEditingEventId(event.event_id)}>
+                    Edit Event
+                  </button>
+                  {editingEventId === event.event_id && (
+                    <EditEventForm
+                      event={event}
+                      onUpdate={(updatedEvent) =>
+                        setEvents((prevEvents) =>
+                          prevEvents.map((e) =>
+                            e.event_id === updatedEvent.event_id
+                              ? updatedEvent
+                              : e
+                          )
+                        )
+                      }
+                      onClose={() => setEditingEventId(null)}
+                    />
+                  )}
                   {deleteError && (
                     <p className="error-message">{deleteError}</p>
                   )}

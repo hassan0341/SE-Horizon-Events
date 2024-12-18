@@ -57,10 +57,17 @@ function deleteEventById(id, token) {
   });
 }
 
+function updateEventById(event_id, updatedFields, token) {
+  return myApi.patch(`/events/${event_id}`, updatedFields, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
 export {
   postEvents,
   getMyEvents,
   getEventsByCreator,
   getMyEventById,
   deleteEventById,
+  updateEventById,
 };
