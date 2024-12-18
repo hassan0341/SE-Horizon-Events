@@ -77,8 +77,7 @@ const ManageEvents = () => {
       setSuccessMessage("Event deleted successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
-      console.error("Error deleting event:", err);
-      setDeleteError("Failed to delete the event. Please try again.");
+      setDeleteError("Failed to delete the event. Please try again.", err);
     }
   };
 
@@ -98,54 +97,48 @@ const ManageEvents = () => {
           <ErrorComponent error={error} />
         ) : (
           <main>
-            {events.length === 0 ? (
-              <p>No events found!</p>
-            ) : (
-              events.map((event) => (
-                <section className="event-card" key={event.event_id}>
-                  <h1 className="card-title">{event.event_name}</h1>
-                  <img
-                    src={event.image}
-                    alt="cover art for the event"
-                    className="card-image"
-                  />
-                  <h3>
-                    Start date: {new Date(event.start_date).toLocaleString()}
-                  </h3>
-                  <p>Venue: {event.venue}</p>
-                  <button
-                    onClick={() => handleDeleteEvent(event.event_id)}
-                    disabled={deletingEventId === event.event_id}
-                    className="delete-button"
-                  >
-                    {deletingEventId === event.event_id
-                      ? "Deleting..."
-                      : "Delete Event"}
-                  </button>
-                  <button onClick={() => setEditingEventId(event.event_id)}>
-                    Edit Event
-                  </button>
-                  {editingEventId === event.event_id && (
-                    <EditEventForm
-                      event={event}
-                      onUpdate={(updatedEvent) =>
-                        setEvents((prevEvents) =>
-                          prevEvents.map((e) =>
-                            e.event_id === updatedEvent.event_id
-                              ? updatedEvent
-                              : e
-                          )
+            {events.map((event) => (
+              <section className="manage-event-card" key={event.event_id}>
+                <h1 className="card-title">{event.event_name}</h1>
+                <img
+                  src={event.image}
+                  alt="cover art for the event"
+                  className="card-image"
+                />
+                <h3>
+                  Start date: {new Date(event.start_date).toLocaleString()}
+                </h3>
+                <p>Venue: {event.venue}</p>
+                <button
+                  onClick={() => handleDeleteEvent(event.event_id)}
+                  disabled={deletingEventId === event.event_id}
+                  className="delete-button"
+                >
+                  {deletingEventId === event.event_id
+                    ? "Deleting..."
+                    : "Delete Event"}
+                </button>
+                <button onClick={() => setEditingEventId(event.event_id)}>
+                  Edit Event
+                </button>
+                {editingEventId === event.event_id && (
+                  <EditEventForm
+                    event={event}
+                    onUpdate={(updatedEvent) =>
+                      setEvents((prevEvents) =>
+                        prevEvents.map((e) =>
+                          e.event_id === updatedEvent.event_id
+                            ? updatedEvent
+                            : e
                         )
-                      }
-                      onClose={() => setEditingEventId(null)}
-                    />
-                  )}
-                  {deleteError && (
-                    <p className="error-message">{deleteError}</p>
-                  )}
-                </section>
-              ))
-            )}
+                      )
+                    }
+                    onClose={() => setEditingEventId(null)}
+                  />
+                )}
+                {deleteError && <p className="error-message">{deleteError}</p>}
+              </section>
+            ))}
           </main>
         )}
       </div>

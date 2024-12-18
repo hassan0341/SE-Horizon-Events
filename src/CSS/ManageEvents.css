@@ -5,8 +5,25 @@
   color: #00aaff;
 }
 
+.manage-event-card {
+  background-color: #1a1717;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  margin: 10px;
+  text-align: center;
+  max-width: 300px;
+  display: inline-block;
+}
+
 .delete-button {
   background-color: red;
+}
+
+.manage-event-card button {
+  margin-right: 10px;
 }
 
 .success-message {

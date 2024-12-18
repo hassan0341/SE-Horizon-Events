@@ -71,6 +71,7 @@ const AuthForm = () => {
           email: user.email,
           username: regUsername,
           role: role,
+          signedUpEvents: [],
         });
       }
       navigate("/");

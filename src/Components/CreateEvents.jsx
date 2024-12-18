@@ -82,7 +82,6 @@ const CreateEvents = () => {
       setEventImage("");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
-      console.error("Error creating event:", err);
       setError("Failed to create event. Please try again.", err);
       setFormLoading(false);
     }

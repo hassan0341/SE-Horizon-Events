@@ -7,6 +7,9 @@ import Loading from "./Loading";
 import ErrorComponent from "./ErrorComponent";
 import { getMyEventById } from "../API-Functions/myApi";
 import { format } from "date-fns";
+import { auth, db } from "../Authentication/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 const SingleEvent = () => {
   const { id } = useParams();
@@ -16,28 +19,70 @@ const SingleEvent = () => {
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(null);
 
+  const user = auth.currentUser;
+
   useEffect(() => {
-    const isTicketmaster = /[a-zA-Z]/.test(id) && /\d/.test(id);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        const isTicketmaster = /[a-zA-Z]/.test(id) && /\d/.test(id);
+        const eventDataFunction = isTicketmaster
+          ? getEventById
+          : getMyEventById;
 
-    console.log("Event ID:", id);
-    console.log("Is Ticketmaster?", isTicketmaster);
+        eventDataFunction(id)
+          .then((eventData) => {
+            setEvent(eventData);
+            setLoading(false);
+            setIsError(null);
 
-    const eventDataFunction = isTicketmaster ? getEventById : getMyEventById;
-
-    eventDataFunction(id)
-      .then((eventData) => {
-        setEvent(eventData);
+            const userRef = doc(db, "Users", currentUser.uid);
+            getDoc(userRef)
+              .then((docSnap) => {
+                if (docSnap.exists()) {
+                  const userData = docSnap.data();
+                  const signedUpEvents = userData.signedUpEvents || [];
+                  setIsSignedUp(signedUpEvents.includes(id));
+                }
+              })
+              .catch((error) => {
+                console.error("Error fetching user data:", error);
+              });
+          })
+          .catch((error) => {
+            setIsError(error.message);
+            setLoading(false);
+          });
+      } else {
         setLoading(false);
-        setIsError(null);
-      })
-      .catch((error) => {
-        setIsError(error.message);
-        setLoading(false);
-      });
+        setIsSignedUp(false);
+      }
+    });
+
+    return () => unsubscribe();
   }, [id]);
 
-  const handleSignUp = () => {
-    setIsSignedUp(true);
+  const handleSignUp = async () => {
+    if (user) {
+      try {
+        const userRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(userRef);
+
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          const signedUpEvents = userData.signedUpEvents || [];
+
+          if (!signedUpEvents.includes(id)) {
+            signedUpEvents.push(id);
+            await updateDoc(userRef, { signedUpEvents });
+            setIsSignedUp(true);
+          } else {
+            setIsSignedUp(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error signing up for event:", error);
+      }
+    }
   };
 
   const handleAddToCalendar = () => {
