@@ -18,8 +18,11 @@ const SingleEvent = () => {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(null);
+  const [isCreator, setIsCreator] = useState(false);
 
   const user = auth.currentUser;
+
+  console.log(user);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -42,6 +45,13 @@ const SingleEvent = () => {
                   const userData = docSnap.data();
                   const signedUpEvents = userData.signedUpEvents || [];
                   setIsSignedUp(signedUpEvents.includes(id));
+
+                  if (
+                    !isTicketmaster &&
+                    eventData.creator === userData.username
+                  ) {
+                    setIsCreator(true);
+                  }
                 }
               })
               .catch((error) => {
@@ -122,7 +132,9 @@ const SingleEvent = () => {
             {event?.dates?.start?.localDate ||
               format(new Date(event.start_date), "dd MMMM yyyy, HH:mm")}
           </p>
-          {!isSignedUp ? (
+          {isCreator ? (
+            <p className="creator-message"> ✨ This is an event you created!</p>
+          ) : !isSignedUp ? (
             <button onClick={handleSignUp}>Sign up to event</button>
           ) : (
             <>

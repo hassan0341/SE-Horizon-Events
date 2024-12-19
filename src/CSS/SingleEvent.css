@@ -64,3 +64,7 @@
 #single-event button:active {
   background-color: #004080;
 }
+
+.creator-message {
+  text-shadow: 0 0 3px #00aaff;
+}
