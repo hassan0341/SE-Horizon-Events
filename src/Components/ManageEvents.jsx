@@ -8,16 +8,14 @@ import { deleteEventById, getEventsByCreator } from "../API-Functions/myApi";
 import ErrorComponent from "./ErrorComponent";
 import "../CSS/ManageEvents.css";
 import EditEventForm from "./EditEventForm";
+import { ToastContainer, toast } from "react-toastify";
 
 const ManageEvents = () => {
   const [events, setEvents] = useState([]);
   const [checkingAccess, setCheckingAccess] = useState(true);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [error, setError] = useState("");
-  const [deleteError, setDeleteError] = useState("");
   const [deletingEventId, setDeletingEventId] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
-
   const [editingEventId, setEditingEventId] = useState(null);
 
   const navigate = useNavigate();
@@ -67,17 +65,16 @@ const ManageEvents = () => {
 
   const handleDeleteEvent = async (id) => {
     setDeletingEventId(id);
-    setDeleteError("");
     try {
       const token = await auth.currentUser.getIdToken();
       await deleteEventById(id, token);
       setEvents((prevEvents) =>
         prevEvents.filter((event) => event.event_id !== id)
       );
-      setSuccessMessage("Event deleted successfully!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+
+      toast.success("Event deleted successfully!");
     } catch (err) {
-      setDeleteError("Failed to delete the event. Please try again.", err);
+      toast.error("Failed to delete the event. Please try again.", err);
     }
   };
 
@@ -90,7 +87,6 @@ const ManageEvents = () => {
       <SimpleHeader />
       <div className="manage-event-container">
         <h1>Manage Your Events</h1>
-        {successMessage && <p className="success-message">{successMessage}</p>}
         {loadingEvents ? (
           <Loading />
         ) : error ? (
@@ -136,12 +132,12 @@ const ManageEvents = () => {
                     onClose={() => setEditingEventId(null)}
                   />
                 )}
-                {deleteError && <p className="error-message">{deleteError}</p>}
               </section>
             ))}
           </main>
         )}
       </div>
+      <ToastContainer position="top-center" theme="dark" autoClose={3000} />
     </>
   );
 };

@@ -70,6 +70,7 @@ const SingleEvent = () => {
   }, [id, user]);
 
   const handleSignUp = async () => {
+    setLoading(true);
     if (user) {
       try {
         const userRef = doc(db, "Users", user.uid);
@@ -83,8 +84,10 @@ const SingleEvent = () => {
             signedUpEvents.push(id);
             await updateDoc(userRef, { signedUpEvents });
             setIsSignedUp(true);
+            setLoading(false);
           } else {
             setIsSignedUp(true);
+            setLoading(false);
           }
         }
       } catch (error) {
@@ -137,7 +140,9 @@ const SingleEvent = () => {
           <p className="creator-message"> ✨ This is an event you created!</p>
         ) : user ? (
           !isSignedUp ? (
-            <button onClick={handleSignUp}>Sign up to event</button>
+            <button onClick={handleSignUp}>
+              {loading ? "Loading" : "Sign up to event"}
+            </button>
           ) : (
             <>
               <p className="signed-message">
