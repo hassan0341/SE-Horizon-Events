@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { getEventById } from "../API-Functions/api";
 import SimpleHeader from "../Components/SimpleHeader";
 import "../CSS/SingleEvent.css";
@@ -19,57 +19,55 @@ const SingleEvent = () => {
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(null);
   const [isCreator, setIsCreator] = useState(false);
-
-  const user = auth.currentUser;
-
-  console.log(user);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        const isTicketmaster = /[a-zA-Z]/.test(id) && /\d/.test(id);
-        const eventDataFunction = isTicketmaster
-          ? getEventById
-          : getMyEventById;
-
-        eventDataFunction(id)
-          .then((eventData) => {
-            setEvent(eventData);
-            setLoading(false);
-            setIsError(null);
-
-            const userRef = doc(db, "Users", currentUser.uid);
-            getDoc(userRef)
-              .then((docSnap) => {
-                if (docSnap.exists()) {
-                  const userData = docSnap.data();
-                  const signedUpEvents = userData.signedUpEvents || [];
-                  setIsSignedUp(signedUpEvents.includes(id));
-
-                  if (
-                    !isTicketmaster &&
-                    eventData.creator === userData.username
-                  ) {
-                    setIsCreator(true);
-                  }
-                }
-              })
-              .catch((error) => {
-                console.error("Error fetching user data:", error);
-              });
-          })
-          .catch((error) => {
-            setIsError(error.message);
-            setLoading(false);
-          });
-      } else {
-        setLoading(false);
-        setIsSignedUp(false);
-      }
+      setUser(currentUser);
     });
 
     return () => unsubscribe();
-  }, [id]);
+  }, []);
+
+  useEffect(() => {
+    const isTicketmaster = /[a-zA-Z]/.test(id) && /\d/.test(id);
+    const eventDataFunction = isTicketmaster ? getEventById : getMyEventById;
+
+    eventDataFunction(id)
+      .then((eventData) => {
+        setEvent(eventData);
+        setLoading(false);
+        setIsError(null);
+
+        if (user) {
+          const userRef = doc(db, "Users", user.uid);
+          getDoc(userRef)
+            .then((docSnap) => {
+              if (docSnap.exists()) {
+                const userData = docSnap.data();
+                const signedUpEvents = userData.signedUpEvents || [];
+                setIsSignedUp(signedUpEvents.includes(id));
+
+                if (
+                  !isTicketmaster &&
+                  eventData.creator === userData.username
+                ) {
+                  setIsCreator(true);
+                }
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching user data:", error);
+            });
+        } else {
+          setIsSignedUp(false);
+        }
+      })
+      .catch((error) => {
+        setIsError(error.message);
+        setLoading(false);
+      });
+  }, [id, user]);
 
   const handleSignUp = async () => {
     if (user) {
@@ -111,30 +109,34 @@ const SingleEvent = () => {
     window.open(eventUrl, "_blank");
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (isError) {
+    return <ErrorComponent error={isError} />;
+  }
+
   return (
     <>
       <SimpleHeader />
-      {loading ? (
-        <Loading />
-      ) : isError ? (
-        <ErrorComponent error={isError} />
-      ) : (
-        <main id="single-event">
-          <h2>{event?.name || event.event_name}</h2>
-          <img
-            src={event?.images?.[0]?.url || event.image}
-            alt="cover art for the event"
-            className="card-image"
-          />
-          <h3>Venue: {event?._embedded?.venues?.[0]?.name || event.venue}</h3>
-          <p>
-            Start date:{" "}
-            {event?.dates?.start?.localDate ||
-              format(new Date(event.start_date), "dd MMMM yyyy, HH:mm")}
-          </p>
-          {isCreator ? (
-            <p className="creator-message"> ✨ This is an event you created!</p>
-          ) : !isSignedUp ? (
+      <main id="single-event">
+        <h2>{event?.name || event.event_name}</h2>
+        <img
+          src={event?.images?.[0]?.url || event.image}
+          alt="cover art for the event"
+          className="card-image"
+        />
+        <h3>Venue: {event?._embedded?.venues?.[0]?.name || event.venue}</h3>
+        <p>
+          Start date:{" "}
+          {event?.dates?.start?.localDate ||
+            format(new Date(event.start_date), "dd MMMM yyyy, HH:mm")}
+        </p>
+        {isCreator ? (
+          <p className="creator-message"> ✨ This is an event you created!</p>
+        ) : user ? (
+          !isSignedUp ? (
             <button onClick={handleSignUp}>Sign up to event</button>
           ) : (
             <>
@@ -145,9 +147,17 @@ const SingleEvent = () => {
                 Add this event to your Google Calendar
               </button>
             </>
-          )}
-        </main>
-      )}
+          )
+        ) : (
+          <p>
+            Please{" "}
+            <Link to="/auth" className="auth-link">
+              log in or register
+            </Link>{" "}
+            if you want to sign up for this event
+          </p>
+        )}
+      </main>
     </>
   );
 };
