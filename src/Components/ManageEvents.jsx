@@ -74,7 +74,7 @@ const ManageEvents = () => {
 
       toast.success("Event deleted successfully!");
     } catch (err) {
-      toast.error("Failed to delete the event. Please try again.", err);
+      toast.error("Failed to delete the event. Please try again.", err.message);
     }
   };
 

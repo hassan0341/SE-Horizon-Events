@@ -3,6 +3,7 @@ import { useState } from "react";
 import { updateEventById } from "../API-Functions/myApi";
 import "../CSS/EditEventForm.css";
 import { auth } from "../Authentication/firebase";
+import { toast } from "react-toastify";
 
 const EditEventForm = ({ event, onUpdate, onClose }) => {
   const [eventName, setEventName] = useState(event.event_name);
@@ -12,12 +13,11 @@ const EditEventForm = ({ event, onUpdate, onClose }) => {
   const [venueName, setVenueName] = useState(event.venue);
   const [eventImage, setEventImage] = useState(event.image);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+
     try {
       const token = await auth.currentUser.getIdToken();
       const updatedFields = {
@@ -32,10 +32,13 @@ const EditEventForm = ({ event, onUpdate, onClose }) => {
         token
       );
       onUpdate(updatedEvent);
+      toast.success("Event updated successfully!");
       onClose();
     } catch (err) {
-      console.log(err);
-      setError("Failed to update event. Please try again.");
+      toast.error(
+        "Failed to update the event. Please try again. ",
+        `${err.message}`
+      );
     } finally {
       setLoading(false);
     }
@@ -81,7 +84,6 @@ const EditEventForm = ({ event, onUpdate, onClose }) => {
             required
           />
         </label>
-        {error && <p className="error-message">{error}</p>}
         <button type="submit" disabled={loading}>
           {loading ? "Updating..." : "Update Event"}
         </button>
@@ -96,7 +98,7 @@ const EditEventForm = ({ event, onUpdate, onClose }) => {
 const formatDateTimeLocal = (date) => {
   const d = new Date(date);
   const isoString = d.toISOString();
-  return isoString.slice(0, 16); // Returns "YYYY-MM-DDTHH:MM"
+  return isoString.slice(0, 16);
 };
 
 export default EditEventForm;

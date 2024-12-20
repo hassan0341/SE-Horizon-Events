@@ -6,6 +6,7 @@
 }
 
 .manage-event-card {
+  position: relative;
   background-color: #1a1717;
   color: #fff;
   border: 1px solid #333;

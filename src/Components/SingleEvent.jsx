@@ -141,7 +141,7 @@ const SingleEvent = () => {
         ) : user ? (
           !isSignedUp ? (
             <button onClick={handleSignUp}>
-              {loading ? "Loading" : "Sign up to event"}
+              {loading ? "Loading..." : "Sign up to event"}
             </button>
           ) : (
             <>
