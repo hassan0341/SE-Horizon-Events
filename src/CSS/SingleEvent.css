@@ -68,3 +68,12 @@
 .creator-message {
   text-shadow: 0 0 3px #00aaff;
 }
+
+.auth-link {
+  color: #00aaff;
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  color: #346697;
+}

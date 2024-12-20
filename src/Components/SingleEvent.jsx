@@ -97,16 +97,14 @@ const SingleEvent = () => {
   };
 
   const handleAddToCalendar = () => {
+    const startDate = event.start_date || event.dates?.start?.localDate;
+    const formattedStartDate =
+      startDate.replace(/-/g, "") + "T" + startDate.replace(/-/g, "") + "Z";
+
     const eventUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(
       event?.event_name || event?.name
-    )}&dates=${event?.start_date.replace(/-/g, "")}T${event?.start_date.replace(
-      /-/g,
-      ""
-    )}Z/${event?.start_date.replace(/-/g, "")}T${event?.start_date.replace(
-      /-/g,
-      ""
-    )}Z&details=Check+out+this+event!&location=${encodeURIComponent(
-      event?.venue || "Unknown location"
+    )}&dates=${formattedStartDate}/${formattedStartDate}&details=Check+out+this+event!&location=${encodeURIComponent(
+      event?._embedded?.venues?.[0]?.name || event.venue || "Unknown location"
     )}`;
 
     window.open(eventUrl, "_blank");
@@ -154,7 +152,7 @@ const SingleEvent = () => {
             </>
           )
         ) : (
-          <p>
+          <p style={{ color: "white" }}>
             Please{" "}
             <Link to="/auth" className="auth-link">
               log in or register
