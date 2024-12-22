@@ -62,6 +62,9 @@ const Header = () => {
                 <Link to="/create-events">
                   <button className="nav-button">Create Events</button>
                 </Link>
+                <button className="logout-button" onClick={handleLogout}>
+                  Log Out
+                </button>
               </div>
             )}
           </div>
@@ -74,16 +77,12 @@ const Header = () => {
           {error && <p className="error-text">{error}</p>}
         </>
       )}
-
       <div className="title-section">
         <h1 className="title">Horizon Events</h1>
         <h2 className="subtitle">Top trending events</h2>
         <Link to="/">
           <button className="home-button">Home</button>
         </Link>
-        <button className="logout-button" onClick={handleLogout}>
-          Log Out
-        </button>
       </div>
     </header>
   );
