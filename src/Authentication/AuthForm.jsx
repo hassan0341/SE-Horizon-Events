@@ -27,6 +27,7 @@ const AuthForm = () => {
   const [regUsername, setRegUsername] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [signUpError, setSignUpError] = useState("");
 
   const navigate = useNavigate();
 
@@ -36,6 +37,7 @@ const AuthForm = () => {
     setRegPasswordErr("");
     setRegUsernameErr("");
     setRoleErr("");
+    setSignUpError("");
     setLoading(true);
 
     if (!regUsername) {
@@ -79,6 +81,7 @@ const AuthForm = () => {
       if (error.code === "auth/weak-password") {
         setRegPasswordErr(error.message);
       } else {
+        setSignUpError(error.code);
         console.log(error.code);
       }
     }
@@ -264,6 +267,7 @@ const AuthForm = () => {
               />
               {regPasswordErr && <p className="error-text">{regPasswordErr}</p>}
               <button>{loading ? "Loading..." : "Sign Up"}</button>
+
               <p>
                 Already a member?{" "}
                 <a
@@ -273,6 +277,9 @@ const AuthForm = () => {
                   Login now
                 </a>
               </p>
+              {signUpError && (
+                <p className="error-text-signup">{signUpError}</p>
+              )}
             </div>
           </form>
         )}

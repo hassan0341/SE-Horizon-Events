@@ -29,10 +29,8 @@ const ManageEvents = () => {
           const docSnap = await getDoc(docRef);
 
           if (docSnap.exists() && docSnap.data().role === "Staff Member") {
-            console.log("Access granted");
             fetchUserEvents(user, docSnap.data().username);
           } else {
-            console.log("Access Denied");
             navigate("/");
           }
         } catch (err) {
@@ -40,7 +38,6 @@ const ManageEvents = () => {
           navigate("/unauthorized");
         }
       } else {
-        console.log("No user logged in");
         navigate("/unauthorized");
       }
       setCheckingAccess(false);

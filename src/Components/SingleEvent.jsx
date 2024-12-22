@@ -20,6 +20,8 @@ const SingleEvent = () => {
   const [isError, setIsError] = useState(null);
   const [isCreator, setIsCreator] = useState(false);
   const [user, setUser] = useState(null);
+  const [fetchingUserError, setFetchingUserError] = useState("");
+  const [signToEventError, setSignToEventError] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -57,7 +59,7 @@ const SingleEvent = () => {
               }
             })
             .catch((error) => {
-              console.error("Error fetching user data:", error);
+              setFetchingUserError("Error fetching user data:", error);
             });
         } else {
           setIsSignedUp(false);
@@ -91,7 +93,7 @@ const SingleEvent = () => {
           }
         }
       } catch (error) {
-        console.error("Error signing up for event:", error);
+        setSignToEventError("Error signing up for event:", error);
       }
     }
   };
@@ -108,8 +110,13 @@ const SingleEvent = () => {
 
     window.open(eventUrl, "_blank");
   };
+
   if (loading) {
     return <Loading />;
+  } else if (fetchingUserError) {
+    return <p style={{ color: "red" }}>{fetchingUserError}</p>;
+  } else if (signToEventError) {
+    return <p style={{ color: "red" }}>{signToEventError}</p>;
   }
 
   if (isError) {

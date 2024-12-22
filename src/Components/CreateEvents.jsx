@@ -32,7 +32,6 @@ const CreateEvents = () => {
           if (docSnap.exists() && docSnap.data().role === "Staff Member") {
             console.log("Access granted");
           } else {
-            console.log("Access Denied");
             navigate("/");
           }
         } catch (error) {
@@ -40,7 +39,6 @@ const CreateEvents = () => {
           navigate("/unauthorized");
         }
       } else {
-        console.log("No user logged in");
         navigate("/unauthorized");
       }
       setCheckingAccess(false);

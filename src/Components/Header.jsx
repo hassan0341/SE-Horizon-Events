@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const Header = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -20,10 +21,10 @@ const Header = () => {
           if (docSnap.exists()) {
             setUserDetails(docSnap.data());
           } else {
-            console.error("No user data found in Firestore.");
+            setError("No user data found in Firestore.");
           }
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          setError("Error fetching user data:", error);
         }
       } else {
         setUserDetails(null);
@@ -38,9 +39,8 @@ const Header = () => {
     try {
       await auth.signOut();
       navigate("/auth");
-      console.log("User logged out");
     } catch (error) {
-      console.log(error.message);
+      setError(error);
     }
   };
 
@@ -65,21 +65,25 @@ const Header = () => {
               </div>
             )}
           </div>
-          <button className="logout-button" onClick={handleLogout}>
-            Log Out
-          </button>
         </>
       ) : (
-        <p className="auth-message">
-          Hello, <Link to="/auth">click to login/sign up</Link>
-        </p>
+        <>
+          <p className="auth-message">
+            Hello, <Link to="/auth">click to login/sign up</Link>
+          </p>
+          {error && <p className="error-text">{error}</p>}
+        </>
       )}
+
       <div className="title-section">
         <h1 className="title">Horizon Events</h1>
         <h2 className="subtitle">Top trending events</h2>
         <Link to="/">
           <button className="home-button">Home</button>
         </Link>
+        <button className="logout-button" onClick={handleLogout}>
+          Log Out
+        </button>
       </div>
     </header>
   );
