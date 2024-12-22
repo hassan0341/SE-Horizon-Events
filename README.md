@@ -18,6 +18,48 @@ _This section will be updated once the hosted version is available._
 
 ---
 
+## Backend Repository
+
+[Link to Backend Repository](https://github.com/hassan0341/My-Back-End-Project)
+
+## Minimum Node Version
+
+Node.js v21.6.1 or higher is required to run this project locally.
+
+## Local Setup
+
+To run this project locally, follow these steps:
+
+1. **Clone the repository:**
+
+```sh
+git clone https://github.com/hassan0341/My-Back-End-Project.git
+```
+
+2. **Navigate to the project directory:**
+
+```sh
+cd/project-directory
+```
+
+3. **Install dependencies:**
+
+```sh
+npm install
+```
+
+4. **Start the development server:**
+
+```sh
+npm run dev
+```
+
+5. **On terminal click `http://localhost:####` to open your web browser and view the app locally.**
+
+```sh
+http://localhost:####
+```
+
 ## Tech Stack
 - **Frontend:** React.js  
 - **Backend:** Node.js with Express.js  
