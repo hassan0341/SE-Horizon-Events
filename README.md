@@ -51,8 +51,11 @@ npm install
 4. **Create Environment File:**
 
    - Create a `.env` For development environment variables, create a file named `.env.development`.
-   - a. Ticketmaster API Key
-You will need to create an account with Ticketmaster and get your API key. Once you have your API key, add it to the .env file like this:
+   - Ticketmaster API Key:
+     - You will need to create an account with Ticketmaster and get your API key. Once you have your API key, add it to the .env file like this:
+      ```sh
+      VITE_TICKETMASTER_API_KEY=your_ticketmaster_api_key
+      ```
 
 
 4. **Start the development server:**
