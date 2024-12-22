@@ -18,6 +18,13 @@ _This section will be updated once the hosted version is available._
 
 ---
 
+## Test Account Access Details
+
+You can create an account to test the website, or use the test account details below:
+
+- **Email**: testinguser@gmail.com
+- **Password**: verysafepassword
+
 ## Backend Repository
 
 [Link to Backend Repository](https://github.com/hassan0341/My-Back-End-Project)
