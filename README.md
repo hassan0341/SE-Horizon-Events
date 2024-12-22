@@ -58,9 +58,12 @@ npm install
       ```
    - Firebase Configuration:
      - To use Firebase Authentication and Firestore, you need to set up Firebase in your project.
-     - Create a Firebase project by following the instructions in the Firebase Console.
+       - Create a Firebase project by following the instructions in the Firebase Console.
        - After setting up Firebase, you'll get your Firebase configuration details.
        - Now, create a .env file in the root of your project and add your Firebase configuration:
+        ```sh
+      VITE_TICKETMASTER_API_KEY=your_ticketmaster_api_key
+        ```
 
 
 4. **Start the development server:**
