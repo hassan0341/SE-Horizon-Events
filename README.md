@@ -13,8 +13,7 @@ Horizon Events is a responsive, user-friendly platform designed to make event br
 ---
 
 ## Hosted Version
-**[Hosted Version URL](#)**  
-_This section will be updated once the hosted version is available._
+**[Hosted Version URL](https://horizon-events.netlify.app/)**  
 
 ---
 
